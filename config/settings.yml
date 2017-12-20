@@ -1,0 +1,4 @@
+plugins:
+  devlog_category:
+    default: "devlogs"
+    client: true
