@@ -1,0 +1,17 @@
+{{#if siteSettings.devlog_categories_enabled}}
+  <section class='field'>
+    <div class="devlog-categories">
+      <label class="checkbox-label">
+        {{input type="checkbox" checked=category.devlog_posting}}
+        {{i18n 'devlog_categories.devlog_posting'}}
+      </label>
+    </div>
+  </section>
+{{/if}}
+
+{{#unless siteSettings.devlog_categories_enabled}}
+  <section class='field'>
+    {{i18n 'devlog_categories.devlog_disabled'}}
+    <a href="/admin/site_settings/category/plugins">{{i18n 'devlog_categories.devlog_disabled_click'}}</a>
+  </section>
+{{/unless}}

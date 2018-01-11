@@ -1,4 +1,4 @@
 plugins:
-  devlog_category:
-    default: "devlogs"
+  devlog_categories_enabled:
+    default: false
     client: true
