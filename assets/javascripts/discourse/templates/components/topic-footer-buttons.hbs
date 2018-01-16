@@ -63,14 +63,15 @@
                   tagName=""
                   connectorTagName="span"}}
 
-  {{#if topic.details.can_create_post}}
-    OVERRIDE
-    {{d-button class="btn-primary create"
-               icon="reply"
-               action=replyToPost
-               label="topic.reply.title"
-               title="topic.reply.help"}}
-  {{/if}}
+  {{#unless topic.devlog_enabled}}
+    {{#if topic.details.can_create_post}}
+      {{d-button class="btn-primary create"
+                 icon="reply"
+                 action=replyToPost
+                 label="topic.reply.title"
+                 title="topic.reply.help"}}
+    {{/if}}
+  {{/unless}}
 
   {{plugin-outlet name="after-topic-footer-main-buttons"
                   args=(hash topic=topic)

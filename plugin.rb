@@ -6,50 +6,40 @@
 enabled_site_setting :devlog_categories_enabled
 
 after_initialize do
-  require_dependency 'basic_category_serializer'
-  require_dependency 'category'
-  require_dependency 'topic'
 
-#  class ::BasicCategorySerializer
-#    attributes :devlog_posting
-#
-#    def include_devlog_posting?
-#      Category.devlog_posting?(object.id)
-#    end
-#
-#    def devlog_posting
-#      true
-#    end
-#  end
+  if SiteSetting.devlog_categories_enabled then
 
-  require_dependency 'topic_view_serializer'
-  class ::TopicViewSerializer
-    attributes :my_attrib
+    Category.register_custom_field_type('devlog_enabled', :boolean)
+    Post.register_custom_field_type('devlog_post', :boolean)
 
-    def include_my_attrib?
-      true
-    end
+    TopicList.preloaded_custom_fields << "devlog_enabled"
 
-    def my_attrib
-      "howdythere"
-    end
-  end
+    add_to_serializer(:topic_view, :devlog_enabled) {
+      object.topic.category.custom_fields['devlog_enabled']
+    }
 
+    add_to_serializer(:topic_view, :can_create_devlog_post) {
+      first_poster = object.topic.posts[0].user_id
+      current_user = scope.user.id
+      first_poster == current_user
+    }
 
-  class ::Category
-      def self.devlog_posting?(category_id)
-         category = Category.find(category_id)
-         return category.custom_fields["devlog_posting"]
+    require_dependency 'post_serializer'
+    class ::PostSerializer
+      attributes :devlog_post
+
+      def include_devlog_post?
+        object.topic.category.custom_fields['devlog_enabled']
       end
+
+      def devlog_post
+        if object.custom_fields['devlog_post'].nil? then
+          false
+        else
+          object.custom_fields['devlog_post']
+        end
+      end
+    end
   end
-#
-#
-#  class ::Topic
-#    def devlog_posting?
-#      SiteSetting.devlog_categories_enabled && 
-#        Category.devlog_posting?(category_id) && 
-#        category.topic_id != id
-#    end
-#  end
 end
 
