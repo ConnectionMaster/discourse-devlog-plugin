@@ -4,3 +4,7 @@ en:
       devlog_enabled: "Posts in this category will be Defold devlog posts."
       devlog_disabled: "Devlog categories is disabled in the site settings. To enable forcing anonymous posts, "
       devlog_disabled_click: 'enable the "devlog categories enabled" setting.'
+    devlog:
+      post:
+        new: "New devlog post"
+        help: "Begin composing a new devlog post"

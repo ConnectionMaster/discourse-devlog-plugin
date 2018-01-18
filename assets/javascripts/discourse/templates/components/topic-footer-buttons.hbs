@@ -63,7 +63,13 @@
                   tagName=""
                   connectorTagName="span"}}
 
-  {{#unless topic.devlog_enabled}}
+  {{#if topic.can_create_devlog_post}}
+    {{d-button class="btn-primary create"
+                 icon="envelope"
+                 action=postDevlog
+                 label="devlog.post.new"
+                 title="devlog.post.help"}}
+  {{else}}
     {{#if topic.details.can_create_post}}
       {{d-button class="btn-primary create"
                  icon="reply"
@@ -71,7 +77,7 @@
                  label="topic.reply.title"
                  title="topic.reply.help"}}
     {{/if}}
-  {{/unless}}
+  {{/if}}
 
   {{plugin-outlet name="after-topic-footer-main-buttons"
                   args=(hash topic=topic)

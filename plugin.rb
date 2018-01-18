@@ -21,7 +21,7 @@ after_initialize do
     add_to_serializer(:topic_view, :can_create_devlog_post) {
       first_poster = object.topic.posts[0].user_id
       current_user = scope.user.id
-      first_poster == current_user
+      object.topic.category.custom_fields['devlog_enabled'] && first_poster == current_user
     }
 
     require_dependency 'post_serializer'
