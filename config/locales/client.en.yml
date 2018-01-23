@@ -8,3 +8,7 @@ en:
       post:
         new: "New devlog post"
         help: "Begin composing a new devlog post"
+    post:
+      controls:
+        set_devlog: "Make devlog post"
+        clear_devlog: "Remove devlog post"

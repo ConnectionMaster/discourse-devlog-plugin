@@ -84,6 +84,25 @@ export function buildManageButtons(attrs, currentUser) {
     }
   }
 
+  if (currentUser.admin && typeof attrs.devlog_post === 'boolean') {
+    if(attrs.devlog_post) {
+      contents.push({
+        icon: 'envelope',
+        label: 'post.controls.clear_devlog',
+        action: 'clearDevlog',
+        className: 'change-devlog'
+      });
+    } else {
+      contents.push({
+        icon: 'envelope',
+        label: 'post.controls.set_devlog',
+        action: 'setDevlog',
+        className: 'change-devlog'
+      });
+    }
+  }
+
+
   return contents;
 }
 
