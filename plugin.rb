@@ -19,9 +19,15 @@ after_initialize do
     end
 
     Category.register_custom_field_type('devlog_enabled', :boolean)
-    Post.register_custom_field_type('devlog_post', :boolean)
+    Post.register_custom_field_type('devlog_post', :string)
 
     TopicList.preloaded_custom_fields << "devlog_enabled"
+
+    add_to_serializer(:topic_list, :devlog_enabled, false) do
+      category_id = object.topics[0].category_id
+      category = Category.find_by_id(category_id)
+      category.custom_fields['devlog_enabled']
+    end
 
     add_to_serializer(:topic_view, :devlog_enabled, false) do
       object.topic.category.custom_fields['devlog_enabled']
@@ -33,19 +39,8 @@ after_initialize do
       object.topic.category.custom_fields['devlog_enabled'] && first_poster == current_user
     end
 
-    require_dependency 'post_serializer'
-    class ::PostSerializer
-      attributes :devlog_post
-      def include_devlog_post?
-        object.topic.category.custom_fields['devlog_enabled']
-      end
-      def devlog_post
-        if object.custom_fields['devlog_post'].nil? then
-          false
-        else
-          object.custom_fields['devlog_post']
-        end
-      end
+    add_to_serializer(:post, :devlog_post, false) do
+      object.custom_fields['devlog_post']
     end
 
     require_dependency "application_controller"
@@ -62,20 +57,20 @@ after_initialize do
         end
       end
 
-      def set
+      def setpost
         post_id   = params.require(:post_id)
-        setdevlogpost(post_id, true)
+        setdevlogpost(post_id, 'post')
       end
 
-      def clear
+      def setreply
         post_id   = params.require(:post_id)
-        setdevlogpost(post_id, false)
+        setdevlogpost(post_id, 'reply')
       end
     end
 
     DiscourseDevlog::Engine.routes.draw do
-      put ":post_id/set" => 'update#set'
-      put ":post_id/clear" => 'update#clear'
+      put ":post_id/setpost" => 'update#setpost'
+      put ":post_id/setreply" => 'update#setreply'
     end
 
     Discourse::Application.routes.append do

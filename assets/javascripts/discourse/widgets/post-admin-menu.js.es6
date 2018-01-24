@@ -84,19 +84,21 @@ export function buildManageButtons(attrs, currentUser) {
     }
   }
 
-  if (currentUser.admin && typeof attrs.devlog_post === 'boolean') {
-    if(attrs.devlog_post) {
+  if (currentUser.admin) {
+    if(attrs.devlog_post == 'post') {
       contents.push({
-        icon: 'envelope',
-        label: 'post.controls.clear_devlog',
-        action: 'clearDevlog',
+        icon: 'reply',
+        label: 'post.controls.reply_devlog',
+        action: 'setDevlogReply',
         className: 'change-devlog'
       });
-    } else {
+    }
+
+    if(attrs.devlog_post == 'reply') {
       contents.push({
         icon: 'envelope',
-        label: 'post.controls.set_devlog',
-        action: 'setDevlog',
+        label: 'post.controls.post_devlog',
+        action: 'setDevlogPost',
         className: 'change-devlog'
       });
     }

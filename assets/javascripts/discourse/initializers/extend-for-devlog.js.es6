@@ -18,47 +18,69 @@ function initializeDevlog(api) {
   api.modifyClass('model:composer', {
 
     devlog_posting: function() {
-      var reply = this.get('devlogPosting');
-      if(this.get('devlogPosting')) {
+      if(this.get('devlogPosting') == 'post') {
         return '<h2>New devlog post</h2>';
       }
-      return reply;
     }.property('devlogPosting'),
-  });
 
-  api.modifyClass('controller:composer', {
-    actions: {
-        save() {
-          console.log(this);
-          var t = this.save();
-          t.then(function () { console.log("done!"); });
-          console.log("yada!");
+    save(opts) {
+      const devlogPosting = this.get('devlogPosting');
+
+      if(devlogPosting && this.get('topic.can_create_devlog_post')) {
+
+        // change category may result in some effect for topic featured link
+        if (!this.get('canEditTopicFeaturedLink')) {
+          this.set('featuredLink', null);
         }
+
+        const postStream = this.get("topic.postStream");
+
+        const setdevlog = function (res) {
+          const post_id = res.responseJson.post.id;
+          const post = postStream.findLoadedPost(post_id);
+          const rebake = () => post.rebake();
+          ajax("/devlog-post/" + post_id + "/set" + devlogPosting, { type: "PUT" })
+            .then(rebake)
+            .catch(popupAjaxError);
+          return res;
+        };
+        return this.createPost(opts).then(setdevlog);
+      } else {
+        return this._super(opts);
+      }
     }
   });
 
   api.modifyClass('controller:topic', {
 
     updateDevlog(post, method) {
-      const refresh = () => this.get("model.postStream").refresh();
+      const rebake = () => post.rebake();
       return ajax("/devlog-post/" + post.get("id") + "/" + method, { type: "PUT" })
-        .then(refresh)
+        .then(rebake)
         .catch(popupAjaxError);
     },
 
     actions: {
+
+      replyToPost(post) {
+        this._super(post);
+        const composerController = this.get('composer');
+        composerController.set('model.devlogPosting', 'reply');
+      },
+
       postDevlog(post) {
-        this.replyToPost(post);
-        composerController.set('model.devlogPosting', 'true');
+        this.actions.replyToPost.call(this, post);
+        const composerController = this.get('composer');
+        composerController.set('model.devlogPosting', 'post');
         return false;
       },
 
-      setDevlog(post) {
-        return this.updateDevlog(post, "set");
+      setDevlogPost(post) {
+        return this.updateDevlog(post, "setpost");
       },
 
-      clearDevlog(post) {
-        return this.updateDevlog(post, "clear");
+      setDevlogReply(post) {
+        return this.updateDevlog(post, "setreply");
       }
     }
   });
