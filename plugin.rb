@@ -48,29 +48,35 @@ after_initialize do
     class DiscourseDevlog::UpdateController < ::ApplicationController
       requires_plugin PLUGIN_NAME
 
-      def setdevlogpost(post_id, value)
-        post = Post.find_by(id: post_id)
-        DistributedMutex.synchronize("devlog-#{post.id}") do
-          post.custom_fields['devlog_post'] = value
-          post.save_custom_fields(true)
-          render json: { post_id => value }
+      # Try setting devlog_post field on a post if the topic allows it.
+      def trysetdevlogpost(topic_id, post_id, value)
+        topic = Topic.find_by(id: topic_id)
+        if topic.category.custom_fields['devlog_enabled'] then
+          post = Post.find_by(id: post_id)
+          DistributedMutex.synchronize("devlog-#{post.id}") do
+            post.custom_fields['devlog_post'] = value
+            post.save_custom_fields(true)
+            render json: { post_id => value }
+          end
         end
       end
 
-      def setpost
+      def trypost
+        topic_id   = params.require(:topic_id)
         post_id   = params.require(:post_id)
-        setdevlogpost(post_id, 'post')
+        trysetdevlogpost(topic_id, post_id, 'post')
       end
 
-      def setreply
+      def tryreply
+        topic_id   = params.require(:topic_id)
         post_id   = params.require(:post_id)
-        setdevlogpost(post_id, 'reply')
+        trysetdevlogpost(topic_id, post_id, 'reply')
       end
     end
 
     DiscourseDevlog::Engine.routes.draw do
-      put ":post_id/setpost" => 'update#setpost'
-      put ":post_id/setreply" => 'update#setreply'
+      put ":topic_id/:post_id/trypost" => 'update#trypost'
+      put ":topic_id/:post_id/tryreply" => 'update#tryreply'
     end
 
     Discourse::Application.routes.append do
