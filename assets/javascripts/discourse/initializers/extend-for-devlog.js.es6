@@ -11,11 +11,12 @@ function initializeDevlog(api) {
   api.includePostAttributes('devlog_post');
 
   // This is for testing purposes.
+/*
   api.decorateWidget('post:after', function (dec) {
     var post = dec.getModel();
     return `[devlog ${post.devlog_post}]`;
   });
-
+*/
   api.modifyClass('model:composer', {
 
     devlog_posting: function() {
