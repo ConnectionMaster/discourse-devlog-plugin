@@ -63,20 +63,20 @@
                   tagName=""
                   connectorTagName="span"}}
 
+  {{#if topic.details.can_create_post}}
+    {{d-button class="btn-primary create"
+               icon="reply"
+               action=replyToPost
+               label="topic.reply.title"
+               title="topic.reply.help"}}
+  {{/if}}
+
   {{#if topic.can_create_devlog_post}}
     {{d-button class="btn-primary create"
                  icon="envelope"
                  action=postDevlog
                  label="devlog.post.new"
                  title="devlog.post.help"}}
-  {{else}}
-    {{#if topic.details.can_create_post}}
-      {{d-button class="btn-primary create"
-                 icon="reply"
-                 action=replyToPost
-                 label="topic.reply.title"
-                 title="topic.reply.help"}}
-    {{/if}}
   {{/if}}
 
   {{plugin-outlet name="after-topic-footer-main-buttons"
