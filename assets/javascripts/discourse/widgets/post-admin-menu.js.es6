@@ -108,18 +108,18 @@ export function buildManageButtons(attrs, currentUser, siteSettings) {
   }
 
   if (currentUser.admin || attrs.canManage) {
-    if (attrs.devlog_post == 'reply') {
-      contents.push({
-        icon: 'envelope',
-        label: 'post.controls.post_devlog',
-        action: 'setDevlogPost',
-        className: 'change-devlog'
-      });
-    } else {
+    if(attrs.devlog_post == 'post') {
       contents.push({
         icon: 'reply',
         label: 'post.controls.reply_devlog',
         action: 'setDevlogReply',
+        className: 'change-devlog'
+      });
+    } else {
+      contents.push({
+        icon: 'envelope',
+        label: 'post.controls.post_devlog',
+        action: 'setDevlogPost',
         className: 'change-devlog'
       });
     }
