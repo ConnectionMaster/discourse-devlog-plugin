@@ -6,6 +6,10 @@
     </div>
   {{/if}}
 
+  {{#if showSharedDraftControls}}
+    {{shared-draft-controls topic=model}}
+  {{/if}}
+
   {{plugin-outlet name="topic-above-post-stream" args=(hash model=model)}}
 
   {{#if model.postStream.loaded}}
@@ -22,7 +26,7 @@
             {{/if}}
 
             {{#if canEditTags}}
-              {{tag-chooser tags=buffered.tags categoryId=buffered.category_id}}
+              {{mini-tag-chooser filterable=true tags=buffered.tags categoryId=buffered.category_id}}
             {{/if}}
 
             {{plugin-outlet name="edit-topic" args=(hash model=model buffered=buffered)}}
@@ -42,9 +46,13 @@
         {{else}}
           <h1>
             {{#unless model.is_warning}}
-              <a href={{pmPath}}>
+              {{#if siteSettings.enable_personal_messages}}
+                <a href={{pmPath}}>
+                  <span class="private-message-glyph">{{d-icon "envelope"}}</span>
+                </a>
+              {{else}}
                 <span class="private-message-glyph">{{d-icon "envelope"}}</span>
-              </a>
+              {{/if}}
             {{/unless}}
 
             {{#if model.details.loaded}}
@@ -59,25 +67,25 @@
             {{/if}}
           </h1>
 
-          {{#unless model.isPrivateMessage}}
-            {{topic-category topic=model class="topic-category"}}
-          {{/unless}}
+          {{topic-category topic=model class="topic-category"}}
         {{/if}}
       {{/topic-title}}
     {{/if}}
+
 
     <div class="container posts">
       <div class='selected-posts {{unless multiSelect 'hidden'}}'>
         {{partial "selected-posts"}}
       </div>
 
-      {{#topic-navigation topic=model jumpToIndex=(action "jumpToIndex") as |info|}}
+      {{#topic-navigation topic=model jumpToDate=(action "jumpToDate") jumpToIndex=(action "jumpToIndex") as |info|}}
         {{#if info.renderTimeline}}
           {{#if info.renderAdminMenuButton}}
             {{topic-admin-menu-button
               topic=model
               fixed="true"
               toggleMultiSelect=(action "toggleMultiSelect")
+              hideMultiSelect=(action "hideMultiSelect")
               deleteTopic=(action "deleteTopic")
               recoverTopic=(action "recoverTopic")
               toggleClosed=(action "toggleClosed")
@@ -86,6 +94,7 @@
               showTopicStatusUpdate=(action "topicRouteAction" "showTopicStatusUpdate")
               showFeatureTopic=(action "topicRouteAction" "showFeatureTopic")
               showChangeTimestamp=(action "topicRouteAction" "showChangeTimestamp")
+              resetBumpDate=(action "resetBumpDate")
               convertToPublicTopic=(action "convertToPublicTopic")
               convertToPrivateMessage=(action "convertToPrivateMessage")}}
           {{/if}}
@@ -104,6 +113,7 @@
             jumpToIndex=(action "jumpToIndex")
             replyToPost=(action "replyToPost")
             toggleMultiSelect=(action "toggleMultiSelect")
+            hideMultiSelect=(action "hideMultiSelect")
             deleteTopic=(action "deleteTopic")
             recoverTopic=(action "recoverTopic")
             toggleClosed=(action "toggleClosed")
@@ -112,6 +122,7 @@
             showTopicStatusUpdate=(action "topicRouteAction" "showTopicStatusUpdate")
             showFeatureTopic=(action "topicRouteAction" "showFeatureTopic")
             showChangeTimestamp=(action "topicRouteAction" "showChangeTimestamp")
+            resetBumpDate=(action "resetBumpDate")
             convertToPublicTopic=(action "convertToPublicTopic")
             convertToPrivateMessage=(action "convertToPrivateMessage")}}
         {{else}}
@@ -126,6 +137,7 @@
                 openUpwards="true"
                 rightSide="true"
                 toggleMultiSelect=(action "toggleMultiSelect")
+                hideMultiSelect=(action "hideMultiSelect")
                 deleteTopic=(action "deleteTopic")
                 recoverTopic=(action "recoverTopic")
                 toggleClosed=(action "toggleClosed")
@@ -134,6 +146,7 @@
                 showTopicStatusUpdate=(action "topicRouteAction" "showTopicStatusUpdate")
                 showFeatureTopic=(action "topicRouteAction" "showFeatureTopic")
                 showChangeTimestamp=(action "topicRouteAction" "showChangeTimestamp")
+                resetBumpDate=(action "resetBumpDate")
                 convertToPublicTopic=(action "convertToPublicTopic")
                 convertToPrivateMessage=(action "convertToPrivateMessage")}}
             {{/if}}
@@ -170,6 +183,9 @@
                 togglePostType=(action "togglePostType")
                 rebakePost=(action "rebakePost")
                 changePostOwner=(action "changePostOwner")
+                grantBadge=(action "grantBadge")
+                lockPost=(action "lockPost")
+                unlockPost=(action "unlockPost")
                 unhidePost=(action "unhidePost")
                 replyToPost=(action "replyToPost")
                 toggleWiki=(action "toggleWiki")
@@ -212,12 +228,14 @@
 
               {{#if model.private_topic_timer.execute_at}}
                 {{topic-timer-info
+                    topicClosed=model.closed
                     statusType=model.private_topic_timer.status_type
                     executeAt=model.private_topic_timer.execute_at
                     duration=model.private_topic_timer.duration}}
               {{/if}}
 
               {{topic-timer-info
+                  topicClosed=model.closed
                   statusType=model.topic_timer.status_type
                   executeAt=model.topic_timer.execute_at
                   basedOnLastPost=model.topic_timer.based_on_last_post
@@ -234,6 +252,7 @@
                   {{topic-footer-buttons
                     topic=model
                     toggleMultiSelect=(action "toggleMultiSelect")
+                    hideMultiSelect=(action "hideMultiSelect")
                     deleteTopic=(action "deleteTopic")
                     recoverTopic=(action "recoverTopic")
                     toggleClosed=(action "toggleClosed")
@@ -242,12 +261,14 @@
                     showTopicStatusUpdate=(action "topicRouteAction" "showTopicStatusUpdate")
                     showFeatureTopic=(action "topicRouteAction" "showFeatureTopic")
                     showChangeTimestamp=(action "topicRouteAction" "showChangeTimestamp")
+                    resetBumpDate=(action "resetBumpDate")
                     convertToPublicTopic=(action "convertToPublicTopic")
                     convertToPrivateMessage=(action "convertToPrivateMessage")
                     toggleBookmark=(action "toggleBookmark")
                     showFlagTopic=(action "topicRouteAction" "showFlagTopic")
                     showInvite=(action "topicRouteAction" "showInvite")
                     toggleArchiveMessage=(action "toggleArchiveMessage")
+                    editFirstPost=(action "editFirstPost")
                     replyToPost=(action "replyToPost")
                     postDevlog=(action "postDevlog")
                     }}
