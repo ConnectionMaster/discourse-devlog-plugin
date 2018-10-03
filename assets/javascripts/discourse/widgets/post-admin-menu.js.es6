@@ -107,7 +107,7 @@ export function buildManageButtons(attrs, currentUser, siteSettings) {
     }
   }
 
-  if (currentUser.admin || attrs.canManage) {
+  if (currentUser.admin || attrs.topicOwner) {
     if(attrs.devlog_post == 'post') {
       contents.push({
         icon: 'reply',
