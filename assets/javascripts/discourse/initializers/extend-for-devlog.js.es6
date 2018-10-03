@@ -10,6 +10,10 @@ function initializeDevlog(api) {
 
   api.includePostAttributes('devlog_post');
 
+  api.addPostClassesCallback((atts) => {
+    if (atts.devlog_post == 'post') return ["devlog-post"];
+  })
+
   // This is for testing purposes.
 /*
   api.decorateWidget('post:after', function (dec) {
