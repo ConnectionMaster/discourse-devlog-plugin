@@ -40,7 +40,7 @@ after_initialize do
     add_to_serializer(:topic_view, :can_create_devlog_post, false) do
       first_poster = object.topic.first_post.user_id
       current_user = scope.user.nil? ? nil : scope.user.id
-      object.topic.category.custom_fields['devlog_enabled'] && !current_user.nil? && first_poster == current_user
+      !object.topic.category.nil? && object.topic.category.custom_fields['devlog_enabled'] && !current_user.nil? && first_poster == current_user
     end
 
     add_to_serializer(:post, :devlog_post, false) do
