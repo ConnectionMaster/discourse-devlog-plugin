@@ -24,9 +24,13 @@ after_initialize do
     TopicList.preloaded_custom_fields << "devlog_enabled"
 
     add_to_serializer(:topic_list, :devlog_enabled, false) do
-      category_id = object.topics[0].category_id
-      category = Category.find_by_id(category_id)
-      category.custom_fields['devlog_enabled']
+      if object.topics.empty? then
+        false
+      else
+        category_id = object.topics[0].category_id
+        category = Category.find_by_id(category_id)
+        category.nil? ? false : category.custom_fields['devlog_enabled']
+      end
     end
 
     add_to_serializer(:topic_view, :devlog_enabled, false) do
@@ -35,8 +39,8 @@ after_initialize do
 
     add_to_serializer(:topic_view, :can_create_devlog_post, false) do
       first_poster = object.topic.first_post.user_id
-      current_user = scope.user.id
-      object.topic.category.custom_fields['devlog_enabled'] && first_poster == current_user
+      current_user = scope.user.nil? ? nil : scope.user.id
+      object.topic.category.custom_fields['devlog_enabled'] && !current_user.nil? && first_poster == current_user
     end
 
     add_to_serializer(:post, :devlog_post, false) do
