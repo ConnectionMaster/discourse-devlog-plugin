@@ -34,7 +34,7 @@ after_initialize do
     end
 
     add_to_serializer(:topic_view, :devlog_enabled, false) do
-      object.topic.category.custom_fields['devlog_enabled']
+      object.topic.category.nil? ? false : object.topic.category.custom_fields['devlog_enabled']
     end
 
     add_to_serializer(:topic_view, :can_create_devlog_post, false) do
