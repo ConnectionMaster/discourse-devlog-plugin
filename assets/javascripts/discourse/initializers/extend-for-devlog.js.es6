@@ -30,46 +30,39 @@ function initializeDevlog(api) {
     }.property('devlogPosting'),
 
     save(opts) {
-      // ---- Replicating logic from composer
-      if (this.get('cantSubmitPost')) {
-        return;
+      const result = this._super(opts);
+      const isCategoryDevlogEnabled = this.get("topic.category.custom_fields.devlog_enabled")
+
+      if (result && ! this.get('editingPost') && isCategoryDevlogEnabled) {
+        const devlogPosting = this.get('devlogPosting');
+        const postStream = this.get("topic.postStream");
+
+        result.then(function(res) {
+          // If this is the first post in a devlog category topic, or
+          // if devlogPosting is "post", try making this a post, otherwise
+          // try making it a reply.
+          let method = "tryreply";
+          if (res.responseJson.post.post_number === 1 || devlogPosting === "post") {
+            method = "trypost";
+          }
+          const topic_id = res.responseJson.post.topic_id;
+          const post_id = res.responseJson.post.id;
+
+          let rebake = function () {};
+          if (postStream) {
+            const post = postStream.findLoadedPost(post_id);
+            rebake = () => post.rebake();
+          }
+
+          ajax(`/devlog-post/${topic_id}/${post_id}/${method}`, { type: "PUT" })
+            .then(rebake)
+            .catch(popupAjaxError);
+
+          return res;
+        });
       }
-      // ---- Replicating logic from composer
-      if (!this.get('canEditTopicFeaturedLink')) {
-        this.set('featuredLink', null);
-      }
-      // ---- Replicating logic from composer
-      if (this.get('editingPost')) {
-        return this.editPost(opts);
-      }
 
-      // Specific stuff for devlog
-      const devlogPosting = this.get('devlogPosting');
-      const postStream = this.get("topic.postStream");
-
-      const applydevlog = function (res) {
-        // If this is the first post in a devlog category topic, or
-        // if devlogPosting is "post", try making this a post, otherwise
-        // try making it a reply.
-        var method = "tryreply";
-        if (res.responseJson.post.post_number == 1 || devlogPosting == "post") {
-          method = "trypost";
-        }
-        const topic_id = res.responseJson.post.topic_id;
-        const post_id = res.responseJson.post.id;
-
-        var rebake = function () {};
-        if (postStream) {
-          const post = postStream.findLoadedPost(post_id);
-          rebake = () => post.rebake();
-        }
-
-        ajax(`/devlog-post/${topic_id}/${post_id}/${method}`, { type: "PUT" })
-          .then(rebake)
-          .catch(popupAjaxError);
-        return res;
-      };
-      return this.createPost(opts).then(applydevlog);
+      return result;
     }
   });
 
