@@ -31,12 +31,9 @@ function initializeDevlog(api) {
 
     save(opts) {
       const result = this._super(opts);
-      const isCategoryDevlogEnabled = this.get("topic.category.custom_fields.devlog_enabled")
+      const isDevlogEnabled = this.get("topic.devlog_enabled")
 
-      console.log('*** TOPIC', this.get("topic"));
-      console.log('*** TOPIC CATEGORY', this.get("topic.category"));
-
-      if (result && ! this.get('editingPost') && isCategoryDevlogEnabled) {
+      if (result && ! this.get('editingPost') && isDevlogEnabled) {
         const devlogPosting = this.get('devlogPosting');
         const postStream = this.get("topic.postStream");
 

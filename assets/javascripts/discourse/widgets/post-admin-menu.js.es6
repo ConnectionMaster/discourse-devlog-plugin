@@ -18,6 +18,8 @@ export function buildManageButtons(attrs, currentUser, siteSettings) {
     return [];
   }
 
+  console.log('*** attrs:', attrs);
+
   let contents = [];
   if (currentUser.staff) {
     contents.push({
