@@ -60,6 +60,7 @@ after_initialize do
           DistributedMutex.synchronize("devlog-#{post.id}") do
             post.custom_fields['devlog_post'] = value
             post.save_custom_fields(true)
+            post.rebake!()
             render json: { post_id => value }
           end
         end

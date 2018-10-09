@@ -14,13 +14,6 @@ function initializeDevlog(api) {
     if (atts.devlog_post == 'post') return ["devlog-post"];
   })
 
-  // This is for testing purposes.
-/*
-  api.decorateWidget('post:after', function (dec) {
-    var post = dec.getModel();
-    return `[devlog ${post.devlog_post}]`;
-  });
-*/
   api.modifyClass('model:composer', {
 
     devlog_posting: function() {
@@ -35,7 +28,6 @@ function initializeDevlog(api) {
 
       if (result && ! this.get('editingPost') && isDevlogEnabled) {
         const devlogPosting = this.get('devlogPosting');
-        //const postStream = this.get("topic.postStream");
 
         result.then(function(res) {
           // If this is the first post in a devlog category topic, or
@@ -48,16 +40,7 @@ function initializeDevlog(api) {
           const topic_id = res.responseJson.post.topic_id;
           const post_id = res.responseJson.post.id;
 
-          /* Rebake returns error "403 Forbidden" for non-admin users
-          let rebake = function () {};
-          if (postStream) {
-            const post = postStream.findLoadedPost(post_id);
-            rebake = () => post.rebake();
-          }
-          */
-
           ajax(`/devlog-post/${topic_id}/${post_id}/${method}`, { type: "PUT" })
-            //.then(rebake)
             .catch(popupAjaxError);
 
           return res;
@@ -71,11 +54,9 @@ function initializeDevlog(api) {
   api.modifyClass('controller:topic', {
 
     updateDevlog(post, method) {
-      const rebake = () => post.rebake();
       const post_id = post.get("id");
       const topic_id = post.get("topic_id");
       return ajax(`/devlog-post/${topic_id}/${post_id}/${method}`, { type: "PUT" })
-        .then(rebake)
         .catch(popupAjaxError);
     },
 
