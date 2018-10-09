@@ -18,8 +18,6 @@ export function buildManageButtons(attrs, currentUser, siteSettings) {
     return [];
   }
 
-  console.log('*** attrs:', attrs);
-
   let contents = [];
   if (currentUser.staff) {
     contents.push({
@@ -109,7 +107,7 @@ export function buildManageButtons(attrs, currentUser, siteSettings) {
     }
   }
 
-  if (currentUser.admin || attrs.topicOwner) {
+  if (siteSettings.devlog_categories_enabled && (currentUser.admin || attrs.topicOwner)) {
     if(attrs.devlog_post == 'post') {
       contents.push({
         icon: 'reply',

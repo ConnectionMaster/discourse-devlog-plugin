@@ -31,11 +31,11 @@ function initializeDevlog(api) {
 
     save(opts) {
       const result = this._super(opts);
-      const isDevlogEnabled = this.get("topic.devlog_enabled")
+      const isDevlogEnabled = this.get("topic.devlog_enabled");
 
       if (result && ! this.get('editingPost') && isDevlogEnabled) {
         const devlogPosting = this.get('devlogPosting');
-        const postStream = this.get("topic.postStream");
+        //const postStream = this.get("topic.postStream");
 
         result.then(function(res) {
           // If this is the first post in a devlog category topic, or
@@ -48,14 +48,16 @@ function initializeDevlog(api) {
           const topic_id = res.responseJson.post.topic_id;
           const post_id = res.responseJson.post.id;
 
+          /* Rebake returns error "403 Forbidden" for non-admin users
           let rebake = function () {};
           if (postStream) {
             const post = postStream.findLoadedPost(post_id);
             rebake = () => post.rebake();
           }
+          */
 
           ajax(`/devlog-post/${topic_id}/${post_id}/${method}`, { type: "PUT" })
-            .then(rebake)
+            //.then(rebake)
             .catch(popupAjaxError);
 
           return res;
