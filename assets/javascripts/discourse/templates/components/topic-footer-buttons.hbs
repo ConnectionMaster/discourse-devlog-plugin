@@ -46,14 +46,6 @@
                title="topic.reply.help"}}
   {{/if}}
 
-  {{#if topic.can_create_devlog_post}}
-    {{d-button class="btn-primary create"
-                 icon="envelope"
-                 action=postDevlog
-                 label="devlog.post.new"
-                 title="devlog.post.help"}}
-  {{/if}}
-
   {{plugin-outlet name="after-topic-footer-main-buttons"
                   args=(hash topic=topic)
                   tagName=""
