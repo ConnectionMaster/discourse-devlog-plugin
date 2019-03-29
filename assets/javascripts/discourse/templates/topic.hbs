@@ -189,6 +189,8 @@
                 unhidePost=(action "unhidePost")
                 replyToPost=(action "replyToPost")
                 toggleWiki=(action "toggleWiki")
+                setDevlogPost=(action "setDevlogPost")
+                setDevlogReply=(action "setDevlogReply")
                 toggleSummary=(action "toggleSummary")
                 removeAllowedUser=(action "removeAllowedUser")
                 removeAllowedGroup=(action "removeAllowedGroup")
@@ -266,7 +268,9 @@
                     showFlagTopic=(route-action "showFlagTopic")
                     toggleArchiveMessage=(action "toggleArchiveMessage")
                     editFirstPost=(action "editFirstPost")
-                    replyToPost=(action "replyToPost")}}
+                    replyToPost=(action "replyToPost")
+                    postDevlog=(action "postDevlog")
+                    }}
                 {{else}}
                   <div id="topic-footer-buttons">
                     {{d-button icon="reply" class="btn-primary pull-right" action=(route-action "showLogin") label="topic.reply.title"}}

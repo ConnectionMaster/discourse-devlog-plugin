@@ -108,6 +108,24 @@ export function buildManageButtons(attrs, currentUser, siteSettings) {
     }
   }
 
+  if (siteSettings.devlog_categories_enabled && (currentUser.admin || attrs.topicOwner)) {
+    if(attrs.devlog_post == 'post') {
+      contents.push({
+        icon: 'reply',
+        label: 'post.controls.reply_devlog',
+        action: 'setDevlogReply',
+        className: 'btn-default change-devlog'
+      });
+    } else {
+      contents.push({
+        icon: 'envelope',
+        label: 'post.controls.post_devlog',
+        action: 'setDevlogPost',
+        className: 'btn-default change-devlog'
+      });
+    }
+  }
+
   return contents;
 }
 
